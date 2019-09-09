@@ -1,7 +1,7 @@
 import {IVersion} from './i-version';
 
 
-export class TimelineSlice {
+export class TimelineItem {
     constructor(private von: Date, private bis: Date, private version: IVersion) {}
 
     getVon(): Date { return this.von; }

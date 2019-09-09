@@ -2,11 +2,11 @@ import {PflegeStatus} from '../domain/pflege-status';
 import {MockEntitiy} from '../mocks/mock-entity';
 import {MockVersion} from '../mocks/mock-version';
 import {VersionMerger} from './version-merger';
-import {TimelineSlice} from '../domain/timeline-slice';
+import {TimelineItem} from '../domain/timeline-item';
 
 
 describe('VersionMerger', () => {
-    // region mergeTwoSlices
+    // region mergeTwoTimelineItems
 
     //        0                   1                   2
     //      9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 ... H
@@ -16,10 +16,10 @@ describe('VersionMerger', () => {
     it('merges two slices: dom fully overlapping sub', () => {
         const verSub = new MockVersion(new Date('2000-01-01'), new Date('2020-12-31'), PflegeStatus.PRODUKTIV, []);
         const verDom = new MockVersion(new Date('1999-01-01'), new Date('9999-12-31'), PflegeStatus.TEST, []);
-        const sliceSub = new TimelineSlice(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
-        const sliceDom = new TimelineSlice(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
+        const sliceSub = new TimelineItem(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
+        const sliceDom = new TimelineItem(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
 
-        const slices = VersionMerger.mergeTwoSlices(sliceDom, sliceSub);
+        const slices = VersionMerger.mergeTwoTimelineItems(sliceDom, sliceSub);
 
         expect(slices.length).toEqual(1);
         expect(slices[0].getVon()).toEqual(new Date('1999-01-01'));
@@ -36,10 +36,10 @@ describe('VersionMerger', () => {
     it('merges two slices: dom overlapping sub at the beginning', () => {
         const verSub = new MockVersion(new Date('2000-01-01'), new Date('2020-12-31'), PflegeStatus.PRODUKTIV, []);
         const verDom = new MockVersion(new Date('1999-01-01'), new Date('2005-05-05'), PflegeStatus.TEST, []);
-        const sliceSub = new TimelineSlice(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
-        const sliceDom = new TimelineSlice(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
+        const sliceSub = new TimelineItem(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
+        const sliceDom = new TimelineItem(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
 
-        const slices = VersionMerger.mergeTwoSlices(sliceDom, sliceSub);
+        const slices = VersionMerger.mergeTwoTimelineItems(sliceDom, sliceSub);
 
         expect(slices.length).toEqual(2);
         expect(slices[0].getVon()).toEqual(new Date('1999-01-01'));
@@ -60,10 +60,10 @@ describe('VersionMerger', () => {
     it('merges two slices: dom overlapping sub at the end', () => {
         const verSub = new MockVersion(new Date('2000-01-01'), new Date('2020-12-31'), PflegeStatus.PRODUKTIV, []);
         const verDom = new MockVersion(new Date('2010-01-01'), new Date('9999-12-31'), PflegeStatus.TEST, []);
-        const sliceSub = new TimelineSlice(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
-        const sliceDom = new TimelineSlice(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
+        const sliceSub = new TimelineItem(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
+        const sliceDom = new TimelineItem(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
 
-        const slices = VersionMerger.mergeTwoSlices(sliceDom, sliceSub);
+        const slices = VersionMerger.mergeTwoTimelineItems(sliceDom, sliceSub);
 
         expect(slices.length).toEqual(2);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -84,10 +84,10 @@ describe('VersionMerger', () => {
     it('merges two slices: dom overlapping sub in the middle', () => {
         const verSub = new MockVersion(new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV, []);
         const verDom = new MockVersion(new Date('2010-01-01'), new Date('2020-12-31'), PflegeStatus.TEST, []);
-        const sliceSub = new TimelineSlice(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
-        const sliceDom = new TimelineSlice(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
+        const sliceSub = new TimelineItem(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
+        const sliceDom = new TimelineItem(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
 
-        const slices = VersionMerger.mergeTwoSlices(sliceDom, sliceSub);
+        const slices = VersionMerger.mergeTwoTimelineItems(sliceDom, sliceSub);
 
         expect(slices.length).toEqual(3);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -112,10 +112,10 @@ describe('VersionMerger', () => {
     it('merges two slices: dom and sub dont overlap', () => {
         const verSub = new MockVersion(new Date('2010-01-01'), new Date('2020-12-31'), PflegeStatus.PRODUKTIV, []);
         const verDom = new MockVersion(new Date('1999-01-01'), new Date('2005-05-05'), PflegeStatus.TEST, []);
-        const sliceSub = new TimelineSlice(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
-        const sliceDom = new TimelineSlice(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
+        const sliceSub = new TimelineItem(verSub.getGueltigVon(), verSub.getGueltigBis(), verSub);
+        const sliceDom = new TimelineItem(verDom.getGueltigVon(), verDom.getGueltigBis(), verDom);
 
-        const slices = VersionMerger.mergeTwoSlices(sliceDom, sliceSub);
+        const slices = VersionMerger.mergeTwoTimelineItems(sliceDom, sliceSub);
 
         expect(slices.length).toEqual(2);
         expect(slices[0].getVon()).toEqual(new Date('1999-01-01'));
@@ -130,7 +130,7 @@ describe('VersionMerger', () => {
     // endregion
 
 
-    // region mergeOneSliceIntoTimeline
+    // region mergeItemIntoTimeline
 
     //        0                   1                   2
     //      9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -144,13 +144,13 @@ describe('VersionMerger', () => {
         const vSub3 = new MockVersion(new Date('2013-01-01'), new Date('2020-12-31'), PflegeStatus.PRODUKTIV, []);
         const vDom1 = new MockVersion(new Date('2005-01-01'), new Date('2015-12-31'), PflegeStatus.TEST, []);
 
-        const slices = VersionMerger.mergeOneSliceIntoTimeline(
-            new TimelineSlice(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1),
+        const slices = VersionMerger.mergeItemIntoTimeline(
+            new TimelineItem(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1),
             [
-                new TimelineSlice(vSub0.getGueltigVon(), vSub0.getGueltigBis(), vSub0),
-                new TimelineSlice(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1),
-                new TimelineSlice(vSub2.getGueltigVon(), vSub2.getGueltigBis(), vSub2),
-                new TimelineSlice(vSub3.getGueltigVon(), vSub3.getGueltigBis(), vSub3)
+                new TimelineItem(vSub0.getGueltigVon(), vSub0.getGueltigBis(), vSub0),
+                new TimelineItem(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1),
+                new TimelineItem(vSub2.getGueltigVon(), vSub2.getGueltigBis(), vSub2),
+                new TimelineItem(vSub3.getGueltigVon(), vSub3.getGueltigBis(), vSub3)
             ]
         );
 
@@ -176,8 +176,8 @@ describe('VersionMerger', () => {
     it('merges one slices into empty timeline', () => {
         const vDom1 = new MockVersion(new Date('2005-01-01'), new Date('2015-12-31'), PflegeStatus.TEST, []);
 
-        const slices = VersionMerger.mergeOneSliceIntoTimeline(
-            new TimelineSlice(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1), []
+        const slices = VersionMerger.mergeItemIntoTimeline(
+            new TimelineItem(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1), []
         );
 
         expect(slices.length).toEqual(1);
@@ -204,12 +204,12 @@ describe('VersionMerger', () => {
 
         const slices = VersionMerger.mergeTwoTimelines(
             [
-                new TimelineSlice(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1),
-                new TimelineSlice(vDom2.getGueltigVon(), vDom2.getGueltigBis(), vDom2)
+                new TimelineItem(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1),
+                new TimelineItem(vDom2.getGueltigVon(), vDom2.getGueltigBis(), vDom2)
             ],
             [
-                new TimelineSlice(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1),
-                new TimelineSlice(vSub2.getGueltigVon(), vSub2.getGueltigBis(), vSub2)
+                new TimelineItem(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1),
+                new TimelineItem(vSub2.getGueltigVon(), vSub2.getGueltigBis(), vSub2)
             ]
         );
 
@@ -237,7 +237,7 @@ describe('VersionMerger', () => {
 
         const slices = VersionMerger.mergeTwoTimelines(
             [],
-            [new TimelineSlice(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1)]
+            [new TimelineItem(vSub1.getGueltigVon(), vSub1.getGueltigBis(), vSub1)]
         );
 
         expect(slices.length).toEqual(1);
@@ -251,7 +251,7 @@ describe('VersionMerger', () => {
         const vDom1 = new MockVersion(new Date('2000-01-01'), new Date('2003-12-31'), PflegeStatus.PRODUKTIV, []);
 
         const slices = VersionMerger.mergeTwoTimelines(
-            [new TimelineSlice(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1)],
+            [new TimelineItem(vDom1.getGueltigVon(), vDom1.getGueltigBis(), vDom1)],
             []
         );
 

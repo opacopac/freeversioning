@@ -6,7 +6,7 @@ import {Timespan} from '../domain/timespan';
 
 
 describe('DependencyTreeSlicer', () => {
-    // region intersectTimeSlices
+    // region intersectTwoTimeSliceLists
 
     //       0                   1
     //       0 1 2 3 4 5 6 7 8 9 0 1 ... H
@@ -20,7 +20,7 @@ describe('DependencyTreeSlicer', () => {
         const e2v1 = new Timespan(new Date('2004-01-01'), new Date('2009-12-31'));
         const e2v2 = new Timespan(new Date('2010-01-01'), new Date('9999-12-31'));
 
-        const slices = DependencyTreeSlicer.intersectTimeSlices([e1v1, e1v2], [e2v1, e2v2]);
+        const slices = DependencyTreeSlicer.intersectTwoTimeSliceLists([e1v1, e1v2], [e2v1, e2v2]);
 
         expect(slices.length).toEqual(4);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -46,7 +46,7 @@ describe('DependencyTreeSlicer', () => {
         const e2v1 = new Timespan(new Date('2000-01-01'), new Date('2001-12-31'));
         const e2v2 = new Timespan(new Date('2006-01-01'), new Date('2009-12-31'));
 
-        const slices = DependencyTreeSlicer.intersectTimeSlices([e1v1, e1v2], [e2v1, e2v2]);
+        const slices = DependencyTreeSlicer.intersectTwoTimeSliceLists([e1v1, e1v2], [e2v1, e2v2]);
 
         expect(slices.length).toEqual(5);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -71,8 +71,8 @@ describe('DependencyTreeSlicer', () => {
         const e1v1 = new Timespan(new Date('2000-01-01'), new Date('2006-12-31'));
         const e1v2 = new Timespan(new Date('2007-01-01'), new Date('9999-12-31'));
 
-        const slices1 = DependencyTreeSlicer.intersectTimeSlices([e1v1, e1v2], []);
-        const slices2 = DependencyTreeSlicer.intersectTimeSlices([], [e1v1, e1v2]);
+        const slices1 = DependencyTreeSlicer.intersectTwoTimeSliceLists([e1v1, e1v2], []);
+        const slices2 = DependencyTreeSlicer.intersectTwoTimeSliceLists([], [e1v1, e1v2]);
 
         expect(slices1.length).toEqual(2);
         expect(slices1[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -89,7 +89,7 @@ describe('DependencyTreeSlicer', () => {
 
 
     it('calculates the intersections of two empty timeline', () => {
-        const slices = DependencyTreeSlicer.intersectTimeSlices([], []);
+        const slices = DependencyTreeSlicer.intersectTwoTimeSliceLists([], []);
 
         expect(slices.length).toEqual(0);
     });
@@ -97,7 +97,7 @@ describe('DependencyTreeSlicer', () => {
     // endregion
 
 
-    // region calcTimeSlices
+    // region calcTreeTimeSlices
 
     //       0                   1
     //       0 1 2 3 4 5 6 7 8 9 0 1 ... H
@@ -119,7 +119,7 @@ describe('DependencyTreeSlicer', () => {
         const awb1v2 = new MockVersion(new Date('2007-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV, [rg2]);
         const awb1 = new MockEntitiy([awb1v1, awb1v2]);
 
-        const slices = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
+        const slices = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
 
         expect(slices.length).toEqual(3);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -156,7 +156,7 @@ describe('DependencyTreeSlicer', () => {
         const awb1v1 = new MockVersion(new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV, [rg1, rg2, rg3]);
         const awb1 = new MockEntitiy([awb1v1]);
 
-        const slices = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
+        const slices = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
 
         expect(slices.length).toEqual(5);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -195,8 +195,8 @@ describe('DependencyTreeSlicer', () => {
         const awb1v2 = new MockVersion(new Date('2007-01-01'), new Date('9999-12-31'), PflegeStatus.TEST, [rg2]);
         const awb1 = new MockEntitiy([awb1v1, awb1v2]);
 
-        const slicesP = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
-        const slicesT = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.TEST);
+        const slicesP = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
+        const slicesT = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.TEST);
 
         expect(slicesP.length).toEqual(1);
         expect(slicesP[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -230,7 +230,7 @@ describe('DependencyTreeSlicer', () => {
         const awb1v2 = new MockVersion(new Date('2008-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV, [rg2]);
         const awb1 = new MockEntitiy([awb1v1, awb1v2]);
 
-        const slices = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
+        const slices = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
 
         expect(slices.length).toEqual(2);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
@@ -278,7 +278,7 @@ describe('DependencyTreeSlicer', () => {
         const awb1v2 = new MockVersion(new Date('2007-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV, [zp2]);
         const awb1 = new MockEntitiy([awb1v1, awb1v2]);
 
-        const slices = DependencyTreeSlicer.calcTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
+        const slices = DependencyTreeSlicer.calcTreeTimeSlices(awb1, new Date('2000-01-01'), new Date('9999-12-31'), PflegeStatus.PRODUKTIV);
 
         expect(slices.length).toEqual(5);
         expect(slices[0].getVon()).toEqual(new Date('2000-01-01'));
